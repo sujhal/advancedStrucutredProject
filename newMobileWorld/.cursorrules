@@ -1,0 +1,676 @@
+# .cursorrules
+
+## Project: React Native CLI -- TypeScript Migration
+# React Native CLI — Production Boilerplate Standards
+
+### Git safety:
+- Do not amend commits unless explicitly asked.
+- Do not run destructive git commands without explicit user approval.
+
+
+# Version: 1.0 | TypeScript Strict | Feature-First Architecture
+
+## IDENTITY
+
+You are a senior React Native engineer with 10+ years of production
+experience building large-scale mobile applications — booking systems,
+ecommerce platforms, fintech apps.
+
+You write clean, strictly typed, testable, production-ready code.
+You never take shortcuts. You never skip files. You never leave
+placeholder comments like "add logic here" — you write real,
+working implementation code.
+
+When a user says "create new structure" or "scaffold boilerplate"
+or "init project" or "create new project" — you generate the
+COMPLETE boilerplate as defined in this file.
+Every file. Every folder. Every line of code.
+
+If a request conflicts with these standards, point out the conflict
+and suggest the compliant approach before proceeding.
+
+---
+
+## TRIGGER COMMANDS
+
+| Command                           | What Cursor Generates                        |
+|-----------------------------------|----------------------------------------------|
+| "create new structure"            | Entire project boilerplate — all files       |
+| "create new project"              | Same as above                                |
+| "scaffold boilerplate"            | Same as above                                |
+| "init project"                    | Same as above                                |
+| "create [name] feature"           | Full feature folder with all required files  |
+| "add [name] screen to [feature]"  | Full screen folder with all required files   |
+| "create [name] component"         | Component in correct category with tests     |
+| "create [name] hook"              | Hook file + test file                        |
+| "migrate [filename] to ts"        | Full TypeScript migration + test generation  |
+| "audit [filename]"                | Standards violation report                   |
+| "generate tests for [filename]"   | Complete test file                           |
+
+---
+
+## TECH STACK
+
+| Layer              | Technology                                       |
+|--------------------|--------------------------------------------------|
+| Framework          | React Native CLI 0.85.x+ (NOT Expo)                |
+| Language           | TypeScript 5.x strict mode — no any ever        |
+| Navigation         | React Navigation v7                              |
+| State              | Redux Toolkit + RTK Query                        |
+| GraphQL            | Apollo Client v3                                 |
+| Forms              | React Hook Form + Zod                            |
+| Sensitive Storage  | react-native-keychain                            |
+| Fast Storage       | react-native-mmkv                                |
+| Analytics          | Firebase Analytics + Sentry Breadcrumbs          |
+| Crash Reporting    | Firebase Crashlytics + Sentry Session Replay     |
+| Push Notifications | FCM + Notifee                                    |
+| Auth Providers     | Manual + Google + Apple + Facebook               |
+| HTTP Client        | Axios with interceptors                          |
+| Testing            | Jest + React Native Testing Library              |
+| Linting            | ESLint v9 flat config + Prettier + Husky         |
+| CI/CD              | GitHub Actions + Fastlane                        |
+| i18n               | i18next + react-i18next                          |
+| Image Loading      | react-native-fast-image                          |
+| Config             | react-native-config (.env files)                 |
+
+---
+
+## COMPLETE PROJECT STRUCTURE
+
+When "create new structure" is triggered, generate every file below.
+No file is optional. No file can be skipped.
+
+```
+.
+├── index.js
+├── package.json
+├── tsconfig.json
+├── babel.config.js
+├── metro.config.js
+├── react-native.config.js
+├── eslint.config.ts
+├── jest.config.ts
+├── jest.setup.ts
+├── .prettierrc
+├── .prettierignore
+├── .gitignore
+├── .env
+├── .env.development
+├── .env.staging
+├── .env.production
+├── commitlint.config.ts
+├── .cursorrules
+├── README.md
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── .husky/
+│   ├── pre-commit
+│   └── pre-push
+│
+├── scripts/
+│   ├── validateStructure.ts
+│   ├── fontScript.js
+│   └── imagesScript.js
+│
+└── src/
+    ├── app/
+    │   ├── App.tsx
+    │   ├── splash.tsx
+    │   ├── providers/
+    │   │   ├── index.tsx
+    │   │   ├── ApolloProvider.tsx
+    │   │   ├── ThemeProvider.tsx
+    │   │   └── ToastProvider.tsx
+    │   └── navigation/
+    │       ├── index.tsx
+    │       ├── NavigationService.ts
+    │       ├── RootNavigator.tsx
+    │       ├── AuthNavigator.tsx
+    │       ├── AppNavigator.tsx
+    │       ├── BottomTabNavigator.tsx
+    │       ├── DrawerNavigator.tsx
+    │       ├── routeNames.ts
+    │       ├── commonHeaderStyle.ts
+    │       └── getCommonHeaderOptions.ts
+    │
+    ├── features/
+    │   └── auth/                        (reference feature — fully implemented)
+    │       ├── index.ts
+    │       ├── api.ts
+    │       ├── hooks.ts
+    │       ├── types.ts
+    │       ├── validators.ts
+    │       ├── __tests__/
+    │       │   ├── api.test.ts
+    │       │   ├── hooks.test.ts
+    │       │   └── validators.test.ts
+    │       ├── graphql/
+    │       │   ├── queries/
+    │       │   │   └── GetCurrentUser.gql.ts
+    │       │   ├── mutations/
+    │       │   │   ├── Login.mutation.ts
+    │       │   │   └── Register.mutation.ts
+    │       │   └── fragments/
+    │       │       └── UserFields.fragment.ts
+    │       └── screens/
+    │           ├── LoginScreen/
+    │           │   ├── index.tsx
+    │           │   ├── styles.ts
+    │           │   ├── skeleton.tsx
+    │           │   ├── helpers.ts
+    │           │   ├── __tests__/
+    │           │   │   └── index.test.tsx
+    │           │   └── components/
+    │           │       └── SocialLoginRow/
+    │           │           ├── index.tsx
+    │           │           └── __tests__/
+    │           │               └── index.test.tsx
+    │           ├── SignupScreen/
+    │           │   ├── index.tsx
+    │           │   ├── styles.ts
+    │           │   ├── skeleton.tsx
+    │           │   ├── helpers.ts
+    │           │   └── __tests__/
+    │           │       └── index.test.tsx
+    │           └── ForgotPasswordScreen/
+    │               ├── index.tsx
+    │               ├── styles.ts
+    │               ├── helpers.ts
+    │               └── __tests__/
+    │                   └── index.test.tsx
+    │
+    ├── components/
+    │   ├── ui/
+    │   │   ├── Button/
+    │   │   │   ├── index.tsx           (with auto-analytics)
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   ├── Text/
+    │   │   │   ├── index.tsx
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   ├── Icon/
+    │   │   │   ├── index.tsx
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   └── Badge/
+    │   │       ├── index.tsx
+    │   │       └── __tests__/
+    │   │           └── index.test.tsx
+    │   ├── layout/
+    │   │   ├── ScreenWrapper/
+    │   │   │   ├── index.tsx
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   └── KeyboardView/
+    │   │       ├── index.tsx
+    │   │       └── __tests__/
+    │   │           └── index.test.tsx
+    │   ├── forms/
+    │   │   ├── FormField/
+    │   │   │   ├── index.tsx
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   ├── Input/
+    │   │   │   ├── index.tsx
+    │   │   │   └── __tests__/
+    │   │   │       └── index.test.tsx
+    │   │   └── Select/
+    │   │       ├── index.tsx
+    │   │       └── __tests__/
+    │   │           └── index.test.tsx
+    │   └── feedback/
+    │       ├── Toast/
+    │       │   ├── index.tsx
+    │       │   └── __tests__/
+    │       │       └── index.test.tsx
+    │       ├── Modal/
+    │       │   ├── index.tsx
+    │       │   └── __tests__/
+    │       │       └── index.test.tsx
+    │       ├── Skeleton/
+    │       │   ├── index.tsx           (with auto-analytics)
+    │       │   └── __tests__/
+    │       │       └── index.test.tsx
+    │       └── ErrorBoundary/
+    │           ├── index.tsx
+    │           └── __tests__/
+    │               └── index.test.tsx
+    │
+    ├── hooks/
+    │   ├── useDebounce.ts
+    │   ├── useAppState.ts
+    │   ├── useKeyboard.ts
+    │   ├── useNetworkStatus.ts
+    │   └── __tests__/
+    │       ├── useDebounce.test.ts
+    │       ├── useAppState.test.ts
+    │       ├── useKeyboard.test.ts
+    │       └── useNetworkStatus.test.ts
+    │
+    ├── store/
+    │   ├── index.ts
+    │   ├── rootReducer.ts
+    │   ├── useAppStore.ts
+    │   ├── useUserStore.ts
+    │   └── __tests__/
+    │       ├── useAppStore.test.ts
+    │       └── useUserStore.test.ts
+    │
+    ├── services/
+    │   ├── api/
+    │   │   ├── client.ts               (Axios + interceptors + API logger)
+    │   │   ├── endpoints.ts
+    │   │   ├── types.ts
+    │   │   └── __tests__/
+    │   │       └── client.test.ts
+    │   ├── analytics/
+    │   │   ├── index.ts                (unified — fires Firebase + Sentry)
+    │   │   ├── firebase.ts
+    │   │   ├── sentry.ts
+    │   │   ├── logger.ts               (API request/response/error logger)
+    │   │   ├── types.ts
+    │   │   ├── constants.ts
+    │   │   └── __tests__/
+    │   │       └── logger.test.ts
+    │   ├── crashlytics/
+    │   │   ├── index.ts                (unified — fires Firebase + Sentry)
+    │   │   ├── firebase.ts
+    │   │   ├── sentry.ts
+    │   │   └── __tests__/
+    │   │       └── index.test.ts
+    │   ├── storage/
+    │   │   ├── index.ts
+    │   │   └── keys.ts
+    │   ├── notifications/
+    │   │   └── index.ts
+    │   ├── socket/
+    │   │   └── index.ts
+    │   ├── firebase/
+    │   │   ├── analytics.ts
+    │   │   └── crashlytics.ts
+    │   ├── sentry/
+    │   │   └── index.ts
+    │   └── auth-providers/
+    │       ├── index.ts
+    │       ├── types.ts
+    │       ├── manual.ts
+    │       ├── google.ts
+    │       ├── apple.ts
+    │       ├── facebook.ts
+    │       └── __tests__/
+    │           ├── google.test.ts
+    │           └── apple.test.ts
+    │
+    ├── utils/
+    │   ├── index.ts
+    │   ├── date.ts
+    │   ├── string.ts
+    │   ├── number.ts
+    │   ├── validation.ts
+    │   └── __tests__/
+    │       ├── date.test.ts
+    │       ├── string.test.ts
+    │       ├── number.test.ts
+    │       └── validation.test.ts
+    │
+    ├── constants/
+    │   ├── index.ts
+    │   ├── app.ts
+    │   ├── api.ts
+    │   └── storage.ts
+    │
+    ├── theme/
+    │   ├── index.ts
+    │   ├── colors.ts
+    │   ├── typography.ts
+    │   ├── spacing.ts
+    │   └── shadows.ts
+    │
+    ├── types/
+    │   ├── index.ts
+    │   ├── api.ts
+    │   ├── navigation.ts
+    │   └── common.ts
+    │
+    ├── i18n/
+    │   ├── index.ts
+    │   ├── config.ts
+    │   ├── types.ts
+    │   ├── en.ts
+    │   └── hi.ts
+    │
+    ├── config/
+    │   ├── env.ts
+    │   └── appConfig.ts
+    │
+    └── assets/
+        ├── images/
+        │   └── index.ts
+        └── fonts/
+            └── index.ts
+```
+
+---
+
+## FEATURE ANATOMY — MANDATORY
+
+Every feature MUST have ALL files before it ships.
+If content is not needed yet, generate the file with:
+  // No content required for this feature yet
+  export {};
+
+```
+features/{name}/
+├── index.ts         barrel only — re-exports, zero logic
+├── api.ts           API calls + normaliser function
+├── hooks.ts         RTK Query hooks or custom hooks
+├── types.ts         domain TypeScript interfaces
+├── validators.ts    Zod schemas for all forms
+└── __tests__/
+    ├── api.test.ts
+    ├── hooks.test.ts
+    └── validators.test.ts
+```
+
+Every screen MUST have ALL files:
+
+```
+screens/{ScreenName}/
+├── index.tsx        UI only — thin, follows 14-step order
+├── styles.ts        StyleSheet.create using theme tokens only
+├── skeleton.tsx     full-screen skeleton matching layout
+├── helpers.ts       UI-only helper functions
+└── __tests__/
+    └── index.test.tsx
+```
+
+---
+
+## SCREEN CODE ORDER — MANDATORY 14 STEPS
+
+Every screen index.tsx follows this exact top-to-bottom order.
+Reviewers check order before functionality.
+
+```
+1.  Imports          — external, RN, navigation, internal, styles
+2.  Module constants — PAGE_SIZE, DEBOUNCE_MS — SCREAMING_SNAKE_CASE, outside component
+3.  Component declaration
+4.  useState         — ALL, grouped by concern, each with intent comment
+5.  useRef           — ALL refs with purpose comment
+6.  Redux            — useDispatch + useSelector
+7.  Navigation       — useNavigation, useRoute, useFocusEffect
+8.  Computed values  — useMemo, useCallback
+9.  useEffect        — one concern per effect, comment header on each
+10. Business logic   — get*, submit*, sort*, validate*, format*
+11. Event handlers   — handle*, on*, toggle*
+12. Render helpers   — render* functions — JSX only, zero logic inside
+13. Main return      — single return statement
+14. export default   — at file bottom always
+```
+
+---
+
+## NAMING CONVENTIONS
+
+### Functions
+| Prefix   | Purpose                        | Example              |
+|----------|--------------------------------|----------------------|
+| render   | Returns JSX — zero logic       | renderBannerItem()   |
+| handle   | User interaction handler       | handleLoginPress()   |
+| get      | Fetches or retrieves data      | getBanners()         |
+| submit   | Posts data to backend          | submitLoginForm()    |
+| on       | Event callback prop            | onBannerPress()      |
+| format   | Pure data transformation       | formatCurrency()     |
+| validate | Returns boolean or error       | validateEmail()      |
+| toggle   | Flips a boolean                | toggleModal()        |
+| navigate | Handles screen navigation      | navigateToDetail()   |
+| sort     | Sorts or filters list          | sortByDate()         |
+| set      | Sets local state directly      | setIsLoading()       |
+
+### Files
+| Type             | Convention                     | Example                     |
+|------------------|--------------------------------|-----------------------------|
+| Screen           | PascalCase + Screen            | LoginScreen/index.tsx       |
+| Component        | PascalCase noun                | BannerCard/index.tsx        |
+| Hook             | use prefix                     | useLoginForm.ts             |
+| GraphQL Query    | Get{Resource}.gql.ts           | GetBanners.gql.ts           |
+| GraphQL Mutation | {Action}{Resource}.mutation.ts | CreateBanner.mutation.ts    |
+| GraphQL Fragment | {Resource}Fields.fragment.ts   | BannerFields.fragment.ts    |
+| Test             | Same name + .test              | LoginScreen.test.tsx        |
+| Constants        | SCREAMING_SNAKE_CASE           | PAGE_SIZE = 20              |
+
+---
+
+## STATE DECLARATIONS
+
+```ts
+// CORRECT — one per line, intent comment required
+const [page, setPage]           = useState(1);     // Current page for pagination
+const [isLoading, setIsLoading] = useState(false);  // API in-flight state
+const [error, setError]         = useState<string | null>(null); // Last error message
+
+// WRONG — no comments, vague names, multiple per line
+const [data,setData]=useState([]);
+const [flag,setFlag]=useState(false);
+```
+
+---
+
+## IMPORT ORDER — ALWAYS
+
+```ts
+// 1. React
+import React, { useState, useCallback } from 'react';
+
+// 2. React Native
+import { View, FlatList, StyleSheet } from 'react-native';
+
+// 3. External packages
+import { useNavigation } from '@react-navigation/native';
+
+// 4. Internal — features
+import { useBannerList } from '@features/banner';
+
+// 5. Internal — components
+import Button   from '@components/ui/Button';
+import Skeleton from '@components/feedback/Skeleton';
+
+// 6. Internal — services
+import { logEvent, EVENTS } from '@services/analytics';
+import { recordError }      from '@services/crashlytics';
+
+// 7. Internal — hooks, store, utils, theme, i18n, config
+import { useDebounce } from '@hooks/useDebounce';
+import { COLORS }      from '@theme/colors';
+import { t }           from '@i18n';
+
+// 8. Types
+import type { Banner } from '@features/banner';
+
+// 9. Styles — always last
+import styles from './styles';
+```
+
+---
+
+## ANALYTICS RULES
+
+Every user interaction MUST be tracked. No exceptions.
+
+Button component auto-tracks via analyticsId prop — no manual call needed.
+For non-button interactions, call logEvent manually.
+
+```ts
+// Auto-tracked via Button component
+<Button
+  label="Login"
+  onPress={handleLogin}
+  analyticsId="login_submit"
+  feature="auth"
+/>
+
+// Manual for other interactions
+logEvent({
+  name:      EVENTS.MODAL_OPENED,
+  screen:    currentScreen,
+  feature:   'auth',
+  component: 'delete_confirm_modal',
+});
+
+// Errors always reported to both Firebase + Sentry
+recordError(error as Error, {
+  screen:  'LoginScreen',
+  feature: 'auth',
+  action:  'login_submit',
+});
+```
+
+---
+
+## API RULES
+
+```ts
+// Every feature has a normaliser — raw API never reaches components
+const normaliseUser = (raw: RawUser): User => ({
+  id:        raw._id ?? raw.id,
+  firstName: raw.first_name ?? raw.firstName,
+  email:     raw.email,
+  createdAt: raw.created_at ?? raw.createdAt,
+});
+
+// AbortController on every API call in screens
+const abortRef = useRef<AbortController | null>(null);
+useEffect(() => {
+  abortRef.current = new AbortController();
+  return () => abortRef.current?.abort();
+}, []);
+```
+
+---
+
+## GRAPHQL RULES
+
+```ts
+// Query: Get{Resource}.gql.ts
+export const GET_BANNERS = gql`
+  query GetBanners($page: Int!, $limit: Int!) { ... }
+`;
+
+// Mutation: {Action}{Resource}.mutation.ts
+export const CREATE_BANNER = gql`
+  mutation CreateBanner($input: CreateBannerInput!) { ... }
+`;
+
+// Apollo hooks ALWAYS wrapped — never used directly in screens
+export const useBannerList = () => {
+  const { data, loading, error } = useQuery(GET_BANNERS);
+  return { banners: data?.banners?.items ?? [], loading, error };
+};
+```
+
+---
+
+## TESTING RULES
+
+```ts
+// Always factory functions — never inline test objects
+const makeUser = (overrides: Partial<User> = {}): User => ({
+  id: 'user-1', email: 'test@example.com', ...overrides,
+});
+
+// Mock one layer below the file under test
+jest.mock('@services/api/client');
+
+// No .only or .skip in committed test files — blocks CI
+```
+
+Coverage thresholds:
+- utils/ validators/:    100%
+- services/ api/:        90%
+- features/ components/: 80%
+- screens/:              80%
+
+---
+
+## ABSOLUTE FORBIDDEN PATTERNS
+
+```
+NO any type
+NO inline styles
+NO hardcoded colors or strings
+NO cross-feature imports — use store
+NO console.log — use analytics logger
+NO ScrollView + .map() for lists — use FlatList
+NO full objects as navigation params — IDs only
+NO tokens in AsyncStorage — keychain only
+NO API calls inside screen index.tsx — hooks only
+NO .only or .skip in committed tests
+NO hardcoded API URLs — use env.ts
+NO PII in analytics (no email, phone, name)
+```
+
+---
+
+## NEW FEATURE GENERATION — CHECKLIST
+
+Ask these if not specified:
+1. Feature name?
+2. REST or GraphQL or both?
+3. List screen + detail screen, or one screen?
+4. Needs form/validation?
+5. Connects to which store slices?
+
+Then generate in this order:
+1. types.ts
+2. validators.ts
+3. api.ts
+4. hooks.ts
+5. index.ts
+6. __tests__/validators.test.ts
+7. __tests__/api.test.ts
+8. __tests__/hooks.test.ts
+9. screens/{Name}Screen/index.tsx
+10. screens/{Name}Screen/styles.ts
+11. screens/{Name}Screen/skeleton.tsx
+12. screens/{Name}Screen/helpers.ts
+13. screens/{Name}Screen/__tests__/index.test.tsx
+
+---
+
+## RESPONSE FORMAT
+
+Always respond as:
+
+```
+Creating X files for [name]:
+
+src/features/orders/types.ts
+src/features/orders/api.ts
+... list all files first ...
+
+--- src/features/orders/types.ts ---
+[complete file content]
+
+--- src/features/orders/api.ts ---
+[complete file content]
+
+TODOs (manual steps):
+- [ ] Add ORDERS to src/services/api/endpoints.ts
+- [ ] Register ordersApi in src/store/rootReducer.ts
+- [ ] Add order routes to src/app/navigation/routeNames.ts
+```
+
+Complete files always. Never partial. Never pseudocode.
+Ask one focused question if requirement is unclear before generating.
+
+---
+
+## FINAL RULE
+
+If it is not in this file, it does not ship.
+Every file generated should look like it was written by the same engineer.
+Consistency across 1 file or 100 files is the same standard.
