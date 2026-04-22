@@ -37,9 +37,10 @@ and suggest the compliant approach before proceeding.
 |-----------------------------------|----------------------------------------------|
 | "create new structure"            | Entire project boilerplate — all files       |
 | "create new project"              | Same as above                                |
-| "scaffold boilerplate"            | Same as above                                |
+| "scaffold boilerplate"            | Same as above,                               |
 | "init project"                    | Same as above                                |
-| "create [name] feature"           | Full feature folder with all required files  |
+| "create auth [name] feature"      | Full feature under features/auth/            |
+| "create app [name] feature"       | Full feature under features/app/             |
 | "add [name] screen to [feature]"  | Full screen folder with all required files   |
 | "create [name] component"         | Component in correct category with tests     |
 | "create [name] hook"              | Hook file + test file                        |
@@ -53,8 +54,8 @@ and suggest the compliant approach before proceeding.
 
 | Layer              | Technology                                       |
 |--------------------|--------------------------------------------------|
-| Framework          | React Native CLI 0.85.x+ (NOT Expo)                |
-| Language           | TypeScript 5.x strict mode — no any ever        |
+| Framework          | React Native CLI 0.85.x+ (NOT Expo)               |
+| Language           | TypeScript 5.x strict mode — no any ever         |
 | Navigation         | React Navigation v7                              |
 | State              | Redux Toolkit + RTK Query                        |
 | GraphQL            | Apollo Client v3                                 |
@@ -72,6 +73,22 @@ and suggest the compliant approach before proceeding.
 | i18n               | i18next + react-i18next                          |
 | Image Loading      | react-native-fast-image                          |
 | Config             | react-native-config (.env files)                 |
+
+---
+
+## THE TWO GOLDEN RULES
+
+Every file placement decision follows these two rules only:
+
+  RULE 1: Does it have a screen?
+    YES → features/auth/{name}/ or features/app/{name}/
+    NO  → services/{name}/
+
+  RULE 2: Is it pre-login or post-login?
+    PRE-LOGIN  → features/auth/{name}/
+    POST-LOGIN → features/app/{name}/
+
+No exceptions. No debates. These two rules answer every placement question.
 
 ---
 
@@ -116,6 +133,7 @@ No file is optional. No file can be skipped.
 │   └── imagesScript.js
 │
 └── src/
+    │
     ├── app/
     │   ├── App.tsx
     │   ├── splash.tsx
@@ -137,55 +155,248 @@ No file is optional. No file can be skipped.
     │       └── getCommonHeaderOptions.ts
     │
     ├── features/
-    │   └── auth/                        (reference feature — fully implemented)
-    │       ├── index.ts
-    │       ├── api.ts
-    │       ├── hooks.ts
-    │       ├── types.ts
-    │       ├── validators.ts
-    │       ├── __tests__/
-    │       │   ├── api.test.ts
-    │       │   ├── hooks.test.ts
-    │       │   └── validators.test.ts
-    │       ├── graphql/
-    │       │   ├── queries/
-    │       │   │   └── GetCurrentUser.gql.ts
-    │       │   ├── mutations/
-    │       │   │   ├── Login.mutation.ts
-    │       │   │   └── Register.mutation.ts
-    │       │   └── fragments/
-    │       │       └── UserFields.fragment.ts
-    │       └── screens/
-    │           ├── LoginScreen/
-    │           │   ├── index.tsx
-    │           │   ├── styles.ts
-    │           │   ├── skeleton.tsx
-    │           │   ├── helpers.ts
-    │           │   ├── __tests__/
-    │           │   │   └── index.test.tsx
-    │           │   └── components/
-    │           │       └── SocialLoginRow/
-    │           │           ├── index.tsx
-    │           │           └── __tests__/
-    │           │               └── index.test.tsx
-    │           ├── SignupScreen/
-    │           │   ├── index.tsx
-    │           │   ├── styles.ts
-    │           │   ├── skeleton.tsx
-    │           │   ├── helpers.ts
-    │           │   └── __tests__/
-    │           │       └── index.test.tsx
-    │           └── ForgotPasswordScreen/
-    │               ├── index.tsx
-    │               ├── styles.ts
-    │               ├── helpers.ts
-    │               └── __tests__/
-    │                   └── index.test.tsx
+    │   │
+    │   ├── auth/                              PRE-LOGIN FLOW
+    │   │   │
+    │   │   ├── login/                         Manual login + main screen
+    │   │   │   ├── index.ts
+    │   │   │   ├── api.ts                     Manual login API call
+    │   │   │   ├── hooks.ts                   useLogin, useLoginForm
+    │   │   │   ├── types.ts                   LoginPayload, LoginResponse
+    │   │   │   ├── validators.ts              loginSchema (email + password)
+    │   │   │   ├── __tests__/
+    │   │   │   │   ├── api.test.ts
+    │   │   │   │   ├── hooks.test.ts
+    │   │   │   │   └── validators.test.ts
+    │   │   │   └── screens/
+    │   │   │       └── LoginScreen/
+    │   │   │           ├── index.tsx          Composes manual form + SM buttons
+    │   │   │           ├── styles.ts
+    │   │   │           ├── skeleton.tsx
+    │   │   │           ├── helpers.ts
+    │   │   │           ├── __tests__/
+    │   │   │           │   └── index.test.tsx
+    │   │   │           └── components/
+    │   │   │               └── SocialLoginButtons/
+    │   │   │                   ├── index.tsx  UI only — renders SM buttons
+    │   │   │                   └── __tests__/
+    │   │   │                       └── index.test.tsx
+    │   │   │
+    │   │   ├── googleLogin/                   Google login — fully isolated
+    │   │   │   ├── index.ts
+    │   │   │   ├── api.ts                     Sends idToken to backend
+    │   │   │   ├── hooks.ts                   useGoogleLogin
+    │   │   │   ├── types.ts                   GoogleLoginPayload, GoogleUser
+    │   │   │   ├── validators.ts
+    │   │   │   ├── __tests__/
+    │   │   │   │   ├── api.test.ts
+    │   │   │   │   ├── hooks.test.ts
+    │   │   │   │   └── validators.test.ts
+    │   │   │   └── screens/
+    │   │   │       └── .gitkeep               No dedicated screen — SDK handles UI
+    │   │   │
+    │   │   ├── appleLogin/                    Apple login — fully isolated
+    │   │   │   ├── index.ts
+    │   │   │   ├── api.ts                     Sends identityToken to backend
+    │   │   │   ├── hooks.ts                   useAppleLogin
+    │   │   │   ├── types.ts                   AppleLoginPayload, AppleUser
+    │   │   │   ├── validators.ts
+    │   │   │   ├── __tests__/
+    │   │   │   │   ├── api.test.ts
+    │   │   │   │   ├── hooks.test.ts
+    │   │   │   │   └── validators.test.ts
+    │   │   │   └── screens/
+    │   │   │       └── .gitkeep
+    │   │   │
+    │   │   ├── facebookLogin/                 Facebook login — fully isolated
+    │   │   │   ├── index.ts
+    │   │   │   ├── api.ts                     Sends accessToken to backend
+    │   │   │   ├── hooks.ts                   useFacebookLogin
+    │   │   │   ├── types.ts                   FacebookLoginPayload, FacebookUser
+    │   │   │   ├── validators.ts
+    │   │   │   ├── __tests__/
+    │   │   │   │   ├── api.test.ts
+    │   │   │   │   ├── hooks.test.ts
+    │   │   │   │   └── validators.test.ts
+    │   │   │   └── screens/
+    │   │   │       └── .gitkeep
+    │   │   │
+    │   │   ├── signup/
+    │   │   │   ├── index.ts
+    │   │   │   ├── api.ts
+    │   │   │   ├── hooks.ts
+    │   │   │   ├── types.ts
+    │   │   │   ├── validators.ts
+    │   │   │   ├── __tests__/
+    │   │   │   │   ├── api.test.ts
+    │   │   │   │   ├── hooks.test.ts
+    │   │   │   │   └── validators.test.ts
+    │   │   │   └── screens/
+    │   │   │       └── SignupScreen/
+    │   │   │           ├── index.tsx
+    │   │   │           ├── styles.ts
+    │   │   │           ├── skeleton.tsx
+    │   │   │           ├── helpers.ts
+    │   │   │           └── __tests__/
+    │   │   │               └── index.test.tsx
+    │   │   │
+    │   │   └── forgotPassword/
+    │   │       ├── index.ts
+    │   │       ├── api.ts
+    │   │       ├── hooks.ts
+    │   │       ├── types.ts
+    │   │       ├── validators.ts
+    │   │       ├── __tests__/
+    │   │       │   ├── api.test.ts
+    │   │       │   ├── hooks.test.ts
+    │   │       │   └── validators.test.ts
+    │   │       └── screens/
+    │   │           └── ForgotPasswordScreen/
+    │   │               ├── index.tsx
+    │   │               ├── styles.ts
+    │   │               ├── helpers.ts
+    │   │               └── __tests__/
+    │   │                   └── index.test.tsx
+    │   │
+    │   └── app/                               POST-LOGIN FLOW
+    │       │
+    │       ├── preOnboarding/
+    │       │   ├── index.ts
+    │       │   ├── api.ts
+    │       │   ├── hooks.ts
+    │       │   ├── types.ts
+    │       │   ├── validators.ts
+    │       │   ├── __tests__/
+    │       │   │   ├── api.test.ts
+    │       │   │   ├── hooks.test.ts
+    │       │   │   └── validators.test.ts
+    │       │   └── screens/
+    │       │       └── PreOnboardingScreen/
+    │       │           ├── index.tsx
+    │       │           ├── styles.ts
+    │       │           ├── skeleton.tsx
+    │       │           ├── helpers.ts
+    │       │           └── __tests__/
+    │       │               └── index.test.tsx
+    │       │
+    │       ├── dashboard/
+    │       │   ├── index.ts
+    │       │   ├── api.ts
+    │       │   ├── hooks.ts
+    │       │   ├── types.ts
+    │       │   ├── validators.ts
+    │       │   ├── __tests__/
+    │       │   │   ├── api.test.ts
+    │       │   │   ├── hooks.test.ts
+    │       │   │   └── validators.test.ts
+    │       │   └── screens/
+    │       │       └── DashboardScreen/
+    │       │           ├── index.tsx
+    │       │           ├── styles.ts
+    │       │           ├── skeleton.tsx
+    │       │           ├── helpers.ts
+    │       │           ├── __tests__/
+    │       │           │   └── index.test.tsx
+    │       │           └── components/
+    │       │               ├── StatsCard/
+    │       │               │   ├── index.tsx
+    │       │               │   └── __tests__/
+    │       │               │       └── index.test.tsx
+    │       │               └── RecentActivity/
+    │       │                   ├── index.tsx
+    │       │                   └── __tests__/
+    │       │                       └── index.test.tsx
+    │       │
+    │       ├── profile/
+    │       │   ├── index.ts
+    │       │   ├── api.ts
+    │       │   ├── hooks.ts
+    │       │   ├── types.ts
+    │       │   ├── validators.ts
+    │       │   ├── __tests__/
+    │       │   │   ├── api.test.ts
+    │       │   │   ├── hooks.test.ts
+    │       │   │   └── validators.test.ts
+    │       │   └── screens/
+    │       │       ├── ProfileScreen/
+    │       │       │   ├── index.tsx
+    │       │       │   ├── styles.ts
+    │       │       │   ├── skeleton.tsx
+    │       │       │   ├── helpers.ts
+    │       │       │   ├── __tests__/
+    │       │       │   │   └── index.test.tsx
+    │       │       │   └── components/
+    │       │       │       └── BankDetails/
+    │       │       │           ├── index.tsx
+    │       │       │           └── __tests__/
+    │       │       │               └── index.test.tsx
+    │       │       └── EditProfileScreen/
+    │       │           ├── index.tsx
+    │       │           ├── styles.ts
+    │       │           ├── helpers.ts
+    │       │           └── __tests__/
+    │       │               └── index.test.tsx
+    │       │
+    │       ├── notifications/
+    │       │   ├── index.ts
+    │       │   ├── api.ts
+    │       │   ├── hooks.ts
+    │       │   ├── types.ts
+    │       │   ├── validators.ts
+    │       │   ├── __tests__/
+    │       │   │   ├── api.test.ts
+    │       │   │   ├── hooks.test.ts
+    │       │   │   └── validators.test.ts
+    │       │   └── screens/
+    │       │       └── NotificationsScreen/
+    │       │           ├── index.tsx
+    │       │           ├── styles.ts
+    │       │           ├── skeleton.tsx
+    │       │           ├── helpers.ts
+    │       │           └── __tests__/
+    │       │               └── index.test.tsx
+    │       │
+    │       ├── payments/
+    │       │   ├── index.ts
+    │       │   ├── api.ts
+    │       │   ├── hooks.ts
+    │       │   ├── types.ts
+    │       │   ├── validators.ts
+    │       │   ├── __tests__/
+    │       │   │   ├── api.test.ts
+    │       │   │   ├── hooks.test.ts
+    │       │   │   └── validators.test.ts
+    │       │   └── screens/
+    │       │       └── PaymentsScreen/
+    │       │           ├── index.tsx
+    │       │           ├── styles.ts
+    │       │           ├── skeleton.tsx
+    │       │           ├── helpers.ts
+    │       │           └── __tests__/
+    │       │               └── index.test.tsx
+    │       │
+    │       └── settings/
+    │           ├── index.ts
+    │           ├── api.ts
+    │           ├── hooks.ts
+    │           ├── types.ts
+    │           ├── validators.ts
+    │           ├── __tests__/
+    │           │   ├── api.test.ts
+    │           │   ├── hooks.test.ts
+    │           │   └── validators.test.ts
+    │           └── screens/
+    │               └── SettingsScreen/
+    │                   ├── index.tsx
+    │                   ├── styles.ts
+    │                   ├── helpers.ts
+    │                   └── __tests__/
+    │                       └── index.test.tsx
     │
     ├── components/
     │   ├── ui/
     │   │   ├── Button/
-    │   │   │   ├── index.tsx           (with auto-analytics)
+    │   │   │   ├── index.tsx           Auto-tracks analytics via analyticsId
     │   │   │   └── __tests__/
     │   │   │       └── index.test.tsx
     │   │   ├── Text/
@@ -232,7 +443,7 @@ No file is optional. No file can be skipped.
     │       │   └── __tests__/
     │       │       └── index.test.tsx
     │       ├── Skeleton/
-    │       │   ├── index.tsx           (with auto-analytics)
+    │       │   ├── index.tsx           Auto-tracks skeleton_shown event
     │       │   └── __tests__/
     │       │       └── index.test.tsx
     │       └── ErrorBoundary/
@@ -260,24 +471,25 @@ No file is optional. No file can be skipped.
     │       ├── useAppStore.test.ts
     │       └── useUserStore.test.ts
     │
-    ├── services/
+    ├── services/                        PURE SDK / INFRASTRUCTURE ONLY
+    │   │                                Nothing here ever has a screen
     │   ├── api/
-    │   │   ├── client.ts               (Axios + interceptors + API logger)
+    │   │   ├── client.ts                Axios + interceptors + API logger
     │   │   ├── endpoints.ts
     │   │   ├── types.ts
     │   │   └── __tests__/
     │   │       └── client.test.ts
     │   ├── analytics/
-    │   │   ├── index.ts                (unified — fires Firebase + Sentry)
+    │   │   ├── index.ts                 Unified — fires Firebase + Sentry
     │   │   ├── firebase.ts
     │   │   ├── sentry.ts
-    │   │   ├── logger.ts               (API request/response/error logger)
+    │   │   ├── logger.ts                API request/response/error logger
     │   │   ├── types.ts
     │   │   ├── constants.ts
     │   │   └── __tests__/
     │   │       └── logger.test.ts
     │   ├── crashlytics/
-    │   │   ├── index.ts                (unified — fires Firebase + Sentry)
+    │   │   ├── index.ts                 Unified — fires Firebase + Sentry
     │   │   ├── firebase.ts
     │   │   ├── sentry.ts
     │   │   └── __tests__/
@@ -285,8 +497,8 @@ No file is optional. No file can be skipped.
     │   ├── storage/
     │   │   ├── index.ts
     │   │   └── keys.ts
-    │   ├── notifications/
-    │   │   └── index.ts
+    │   ├── notifications/               FCM + Notifee SDK setup only
+    │   │   └── index.ts                 No screen here — screen is in features/app/notifications/
     │   ├── socket/
     │   │   └── index.ts
     │   ├── firebase/
@@ -294,7 +506,7 @@ No file is optional. No file can be skipped.
     │   │   └── crashlytics.ts
     │   ├── sentry/
     │   │   └── index.ts
-    │   └── auth-providers/
+    │   └── auth-providers/              SDK wrappers only — no screens
     │       ├── index.ts
     │       ├── types.ts
     │       ├── manual.ts
@@ -347,7 +559,7 @@ No file is optional. No file can be skipped.
     │   ├── env.ts
     │   └── appConfig.ts
     │
-    └── assets/
+    └── res/
         ├── images/
         │   └── index.ts
         └── fonts/
@@ -358,35 +570,94 @@ No file is optional. No file can be skipped.
 
 ## FEATURE ANATOMY — MANDATORY
 
-Every feature MUST have ALL files before it ships.
+Every feature MUST have ALL files. No exceptions.
 If content is not needed yet, generate the file with:
   // No content required for this feature yet
   export {};
+NEVER skip creating the file. Consistency is non-negotiable.
 
 ```
-features/{name}/
-├── index.ts         barrel only — re-exports, zero logic
-├── api.ts           API calls + normaliser function
-├── hooks.ts         RTK Query hooks or custom hooks
-├── types.ts         domain TypeScript interfaces
-├── validators.ts    Zod schemas for all forms
-└── __tests__/
-    ├── api.test.ts
-    ├── hooks.test.ts
-    └── validators.test.ts
+features/auth/{name}/ or features/app/{name}/
+├── index.ts          barrel only — re-exports, zero logic
+├── api.ts            API calls + normaliser function
+├── hooks.ts          RTK Query hooks or custom hooks
+├── types.ts          domain TypeScript interfaces
+├── validators.ts     Zod schemas for all forms
+├── __tests__/
+│   ├── api.test.ts
+│   ├── hooks.test.ts
+│   └── validators.test.ts
+└── screens/
+    └── {ScreenName}/
+        ├── index.tsx         UI only — thin, 14-step order
+        ├── styles.ts         StyleSheet.create — theme tokens only
+        ├── skeleton.tsx      full layout skeleton
+        ├── helpers.ts        UI-only helpers
+        ├── __tests__/
+        │   └── index.test.tsx
+        └── components/       screen-local components only
+            └── {ComponentName}/
+                ├── index.tsx
+                └── __tests__/
+                    └── index.test.tsx
 ```
 
-Every screen MUST have ALL files:
+SM login features (googleLogin, appleLogin, facebookLogin) have no
+dedicated screen — SDK handles UI natively. Use .gitkeep in screens/:
+```
+features/auth/googleLogin/screens/.gitkeep
+```
+
+---
+
+## AUTH FEATURE — HOW LOGIN COMPOSES SM FEATURES
+
+login/ owns manual login logic + main LoginScreen.
+LoginScreen composes all SM login options via SocialLoginButtons component.
+Each SM feature is fully isolated — add or remove with zero impact on others.
 
 ```
-screens/{ScreenName}/
-├── index.tsx        UI only — thin, follows 14-step order
-├── styles.ts        StyleSheet.create using theme tokens only
-├── skeleton.tsx     full-screen skeleton matching layout
-├── helpers.ts       UI-only helper functions
-└── __tests__/
-    └── index.test.tsx
+LoginScreen/index.tsx
+    uses → login/hooks.ts          manual login logic
+    uses → login/validators.ts     email + password validation
+    renders → SocialLoginButtons/  UI component only
+
+SocialLoginButtons/index.tsx
+    imports useGoogleLogin   from @features/auth/googleLogin
+    imports useAppleLogin    from @features/auth/appleLogin
+    imports useFacebookLogin from @features/auth/facebookLogin
+    renders Button for each — analyticsId required on every button
 ```
+
+Adding a new SM provider (e.g. Twitter):
+  1. Create features/auth/twitterLogin/ with full anatomy
+  2. Add useTwitterLogin to SocialLoginButtons
+  3. Zero changes to login/ or any other feature
+
+Removing a provider:
+  1. Delete features/auth/facebookLogin/
+  2. Remove from SocialLoginButtons
+  3. Zero impact on anything else
+
+---
+
+## SERVICES vs FEATURES — THE ONLY RULE
+
+```
+services/    Pure SDK / infrastructure — NEVER has a screen
+             analytics, crashlytics, sentry, firebase,
+             api client, storage, socket, auth-providers SDKs,
+             notifications SDK setup (FCM token, channels)
+
+features/    Anything with a screen — always
+             notifications screen → features/app/notifications/
+             payments screen     → features/app/payments/
+             search screen       → features/app/search/
+```
+
+Note: services/notifications/ handles FCM SDK wiring only.
+      features/app/notifications/ handles the screen + business logic.
+      Both can exist simultaneously — they serve different concerns.
 
 ---
 
@@ -397,7 +668,7 @@ Reviewers check order before functionality.
 
 ```
 1.  Imports          — external, RN, navigation, internal, styles
-2.  Module constants — PAGE_SIZE, DEBOUNCE_MS — SCREAMING_SNAKE_CASE, outside component
+2.  Module constants — PAGE_SIZE, DEBOUNCE_MS — SCREAMING_SNAKE_CASE
 3.  Component declaration
 4.  useState         — ALL, grouped by concern, each with intent comment
 5.  useRef           — ALL refs with purpose comment
@@ -407,7 +678,7 @@ Reviewers check order before functionality.
 9.  useEffect        — one concern per effect, comment header on each
 10. Business logic   — get*, submit*, sort*, validate*, format*
 11. Event handlers   — handle*, on*, toggle*
-12. Render helpers   — render* functions — JSX only, zero logic inside
+12. Render helpers   — render* — JSX only, zero logic inside
 13. Main return      — single return statement
 14. export default   — at file bottom always
 ```
@@ -415,6 +686,13 @@ Reviewers check order before functionality.
 ---
 
 ## NAMING CONVENTIONS
+
+### Feature folders — always camelCase
+```
+login, signup, forgotPassword, googleLogin,
+appleLogin, facebookLogin, preOnboarding,
+dashboard, profile, settings, notifications
+```
 
 ### Functions
 | Prefix   | Purpose                        | Example              |
@@ -435,18 +713,15 @@ Reviewers check order before functionality.
 | Type             | Convention                     | Example                     |
 |------------------|--------------------------------|-----------------------------|
 | Screen           | PascalCase + Screen            | LoginScreen/index.tsx       |
-| Component        | PascalCase noun                | BannerCard/index.tsx        |
-| Hook             | use prefix                     | useLoginForm.ts             |
-| GraphQL Query    | Get{Resource}.gql.ts           | GetBanners.gql.ts           |
-| GraphQL Mutation | {Action}{Resource}.mutation.ts | CreateBanner.mutation.ts    |
-| GraphQL Fragment | {Resource}Fields.fragment.ts   | BannerFields.fragment.ts    |
+| Component        | PascalCase noun                | SocialLoginButtons/index.tsx|
+| Hook             | use prefix + camelCase         | useGoogleLogin.ts           |
+| GraphQL Query    | Get{Resource}.gql.ts           | GetCurrentUser.gql.ts       |
+| GraphQL Mutation | {Action}{Resource}.mutation.ts | Login.mutation.ts           |
+| GraphQL Fragment | {Resource}Fields.fragment.ts   | UserFields.fragment.ts      |
 | Test             | Same name + .test              | LoginScreen.test.tsx        |
 | Constants        | SCREAMING_SNAKE_CASE           | PAGE_SIZE = 20              |
 
----
-
-## STATE DECLARATIONS
-
+### State declarations
 ```ts
 // CORRECT — one per line, intent comment required
 const [page, setPage]           = useState(1);     // Current page for pagination
@@ -473,7 +748,9 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 // 4. Internal — features
-import { useBannerList } from '@features/banner';
+import { useGoogleLogin }   from '@features/auth/googleLogin';
+import { useAppleLogin }    from '@features/auth/appleLogin';
+import { useFacebookLogin } from '@features/auth/facebookLogin';
 
 // 5. Internal — components
 import Button   from '@components/ui/Button';
@@ -489,7 +766,7 @@ import { COLORS }      from '@theme/colors';
 import { t }           from '@i18n';
 
 // 8. Types
-import type { Banner } from '@features/banner';
+import type { LoginPayload } from '@features/auth/login';
 
 // 9. Styles — always last
 import styles from './styles';
@@ -501,7 +778,7 @@ import styles from './styles';
 
 Every user interaction MUST be tracked. No exceptions.
 
-Button component auto-tracks via analyticsId prop — no manual call needed.
+Button auto-tracks via analyticsId — no manual call in screen needed.
 For non-button interactions, call logEvent manually.
 
 ```ts
@@ -513,7 +790,7 @@ For non-button interactions, call logEvent manually.
   feature="auth"
 />
 
-// Manual for other interactions
+// Manual for non-button interactions
 logEvent({
   name:      EVENTS.MODAL_OPENED,
   screen:    currentScreen,
@@ -521,7 +798,7 @@ logEvent({
   component: 'delete_confirm_modal',
 });
 
-// Errors always reported to both Firebase + Sentry
+// Errors always reported to both Firebase Crashlytics + Sentry
 recordError(error as Error, {
   screen:  'LoginScreen',
   feature: 'auth',
@@ -534,7 +811,7 @@ recordError(error as Error, {
 ## API RULES
 
 ```ts
-// Every feature has a normaliser — raw API never reaches components
+// Every feature has a normaliser — raw API response never reaches components
 const normaliseUser = (raw: RawUser): User => ({
   id:        raw._id ?? raw.id,
   firstName: raw.first_name ?? raw.firstName,
@@ -556,19 +833,23 @@ useEffect(() => {
 
 ```ts
 // Query: Get{Resource}.gql.ts
-export const GET_BANNERS = gql`
-  query GetBanners($page: Int!, $limit: Int!) { ... }
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser { user { id email firstName } }
 `;
 
 // Mutation: {Action}{Resource}.mutation.ts
-export const CREATE_BANNER = gql`
-  mutation CreateBanner($input: CreateBannerInput!) { ... }
+export const LOGIN = gql`
+  mutation Login($input: LoginInput!) { login(input: $input) { token user { id } } }
 `;
 
-// Apollo hooks ALWAYS wrapped — never used directly in screens
-export const useBannerList = () => {
-  const { data, loading, error } = useQuery(GET_BANNERS);
-  return { banners: data?.banners?.items ?? [], loading, error };
+// Apollo hooks ALWAYS wrapped in feature hooks — never used directly in screens
+export const useLogin = () => {
+  const [loginMutation, { loading }] = useMutation(LOGIN);
+  const submitLogin = async (input: LoginPayload) => {
+    const result = await loginMutation({ variables: { input } });
+    return result.data?.login;
+  };
+  return { submitLogin, loading };
 };
 ```
 
@@ -579,39 +860,27 @@ export const useBannerList = () => {
 ```ts
 // Always factory functions — never inline test objects
 const makeUser = (overrides: Partial<User> = {}): User => ({
-  id: 'user-1', email: 'test@example.com', ...overrides,
+  id: 'user-1', email: 'test@example.com',
+  firstName: 'Test', lastName: 'User',
+  createdAt: '2025-01-01T00:00:00Z',
+  ...overrides,
 });
 
 // Mock one layer below the file under test
+// In api.test.ts — mock the HTTP client
 jest.mock('@services/api/client');
+
+// In hooks.test.ts — mock the api module
+jest.mock('@features/auth/login/api');
 
 // No .only or .skip in committed test files — blocks CI
 ```
 
 Coverage thresholds:
-- utils/ validators/:    100%
-- services/ api/:        90%
-- features/ components/: 80%
-- screens/:              80%
-
----
-
-## ABSOLUTE FORBIDDEN PATTERNS
-
-```
-NO any type
-NO inline styles
-NO hardcoded colors or strings
-NO cross-feature imports — use store
-NO console.log — use analytics logger
-NO ScrollView + .map() for lists — use FlatList
-NO full objects as navigation params — IDs only
-NO tokens in AsyncStorage — keychain only
-NO API calls inside screen index.tsx — hooks only
-NO .only or .skip in committed tests
-NO hardcoded API URLs — use env.ts
-NO PII in analytics (no email, phone, name)
-```
+  utils/ validators/:    100%
+  services/ api/:        90%
+  features/ components/: 80%
+  screens/:              80%
 
 ---
 
@@ -619,25 +888,48 @@ NO PII in analytics (no email, phone, name)
 
 Ask these if not specified:
 1. Feature name?
-2. REST or GraphQL or both?
-3. List screen + detail screen, or one screen?
-4. Needs form/validation?
-5. Connects to which store slices?
+2. Auth flow (pre-login) or App flow (post-login)?
+3. REST or GraphQL or both?
+4. List screen + detail screen, or one screen?
+5. Needs form/validation?
+6. Connects to which store slices?
 
-Then generate in this order:
-1. types.ts
-2. validators.ts
-3. api.ts
-4. hooks.ts
-5. index.ts
-6. __tests__/validators.test.ts
-7. __tests__/api.test.ts
-8. __tests__/hooks.test.ts
-9. screens/{Name}Screen/index.tsx
-10. screens/{Name}Screen/styles.ts
-11. screens/{Name}Screen/skeleton.tsx
-12. screens/{Name}Screen/helpers.ts
-13. screens/{Name}Screen/__tests__/index.test.tsx
+Then generate in this exact order:
+1.  features/{flow}/{name}/types.ts
+2.  features/{flow}/{name}/validators.ts
+3.  features/{flow}/{name}/api.ts
+4.  features/{flow}/{name}/hooks.ts
+5.  features/{flow}/{name}/index.ts
+6.  features/{flow}/{name}/__tests__/validators.test.ts
+7.  features/{flow}/{name}/__tests__/api.test.ts
+8.  features/{flow}/{name}/__tests__/hooks.test.ts
+9.  features/{flow}/{name}/screens/{Name}Screen/index.tsx
+10. features/{flow}/{name}/screens/{Name}Screen/styles.ts
+11. features/{flow}/{name}/screens/{Name}Screen/skeleton.tsx
+12. features/{flow}/{name}/screens/{Name}Screen/helpers.ts
+13. features/{flow}/{name}/screens/{Name}Screen/__tests__/index.test.tsx
+
+---
+
+## ABSOLUTE FORBIDDEN PATTERNS
+
+```
+NO any type
+NO inline styles — use styles.ts with theme tokens
+NO hardcoded colors or strings — use theme + i18n
+NO cross-feature imports — features communicate via store only
+NO console.log — use analytics logger
+NO ScrollView + .map() for lists — always FlatList
+NO full objects as navigation params — IDs only
+NO tokens in AsyncStorage — keychain only
+NO API calls inside screen index.tsx — hooks only
+NO .only or .skip in committed tests
+NO hardcoded API URLs — use config/env.ts
+NO PII in analytics events (no email, phone, name)
+NO logic inside render* functions — JSX only
+NO screens inside services/
+NO SDK setup inside features/
+```
 
 ---
 
@@ -646,31 +938,32 @@ Then generate in this order:
 Always respond as:
 
 ```
-Creating X files for [name]:
+Creating X files for [feature/component name]:
 
-src/features/orders/types.ts
-src/features/orders/api.ts
+src/features/auth/googleLogin/types.ts
+src/features/auth/googleLogin/api.ts
 ... list all files first ...
 
---- src/features/orders/types.ts ---
+--- src/features/auth/googleLogin/types.ts ---
 [complete file content]
 
---- src/features/orders/api.ts ---
+--- src/features/auth/googleLogin/api.ts ---
 [complete file content]
 
-TODOs (manual steps):
-- [ ] Add ORDERS to src/services/api/endpoints.ts
-- [ ] Register ordersApi in src/store/rootReducer.ts
-- [ ] Add order routes to src/app/navigation/routeNames.ts
+TODOs (manual steps required):
+- [ ] Add GOOGLE_WEB_CLIENT_ID to .env files
+- [ ] Register googleLogin in AuthNavigator if needed
+- [ ] Add google_login button to SocialLoginButtons component
 ```
 
 Complete files always. Never partial. Never pseudocode.
-Ask one focused question if requirement is unclear before generating.
+Ask one focused question if a requirement is unclear before generating.
 
 ---
 
 ## FINAL RULE
 
 If it is not in this file, it does not ship.
-Every file generated should look like it was written by the same engineer.
+Every file generated must look like it was written by the same engineer.
 Consistency across 1 file or 100 files is the same standard.
+When in doubt — ask one question, then generate.
