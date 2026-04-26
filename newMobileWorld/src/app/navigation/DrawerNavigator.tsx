@@ -1,30 +1,19 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
 
-import { ROUTE_NAMES } from '@app/navigation/routeNames';
-import BottomTabNavigator from '@app/navigation/BottomTabNavigator';
-import { useI18n } from '@i18n';
-import { COLORS } from '@theme/colors';
-import type { AppDrawerParamList } from '@types/navigation';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-const Drawer = createDrawerNavigator<AppDrawerParamList>();
+import AppNavigator from './AppNavigator';
+import { ROUTES } from './routeNames';
+import type { DrawerParamList } from './types';
+import ProfileSettingsScreen from '@features/app/profile/screens/ProfileSettingsScreen';
 
-const DrawerNavigator = () => {
-  const { t } = useI18n();
+const Drawer = createDrawerNavigator<DrawerParamList>();
 
+const DrawerNavigator = (): React.JSX.Element => {
   return (
-    <Drawer.Navigator
-      screenOptions={{
-        headerTintColor: COLORS.textPrimary,
-        drawerActiveTintColor: COLORS.primary,
-        drawerInactiveTintColor: COLORS.textSecondary,
-      }}
-    >
-      <Drawer.Screen
-        name={ROUTE_NAMES.MainTabs}
-        component={BottomTabNavigator}
-        options={{ title: t('main.homeTitle') }}
-      />
+    <Drawer.Navigator screenOptions={{ headerShown: false }}>
+      <Drawer.Screen component={AppNavigator} name={ROUTES.APP_DRAWER} />
+      <Drawer.Screen component={ProfileSettingsScreen} name={ROUTES.PROFILE_SETTINGS} />
     </Drawer.Navigator>
   );
 };

@@ -1,36 +1,21 @@
-import React, { useEffect } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import React from 'react';
+
+import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { RootNavigator } from '@app/navigation';
-import { AppProviders } from '@app/providers';
-import ErrorBoundary from '@components/feedback/ErrorBoundary';
-import { store } from '@store/index';
-import { EVENTS, logEvent } from '@services/analytics';
-import { initSentry } from '@services/sentry';
+import RootNavigator from './navigation/RootNavigator';
+import Providers from './providers';
 
-initSentry();
-
-const App = () => {
-  const scheme = useColorScheme();
-
-  useEffect(() => {
-    logEvent({ name: EVENTS.APP_OPENED, screen: 'App', feature: 'app' });
-  }, []);
-
+const App = (): React.JSX.Element => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
-        <Provider store={store}>
-          <ErrorBoundary>
-            <AppProviders>
-              <RootNavigator />
-            </AppProviders>
-          </ErrorBoundary>
-        </Provider>
+        <Providers>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </Providers>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

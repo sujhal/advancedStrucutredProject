@@ -1,17 +1,13 @@
-import React, { type PropsWithChildren } from 'react';
-import { I18nextProvider } from 'react-i18next';
+import React from 'react';
 
-import { ApolloProvider } from '@app/providers/ApolloProvider';
-import { ThemeProvider } from '@app/providers/ThemeProvider';
-import { ToastProvider } from '@app/providers/ToastProvider';
-import { i18n } from '@i18n';
+import { AppFlowProvider } from '@app/state/AppFlowContext';
 
-export const AppProviders = ({ children }: PropsWithChildren) => (
-  <ApolloProvider>
-    <I18nextProvider i18n={i18n}>
-      <ThemeProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </ThemeProvider>
-    </I18nextProvider>
-  </ApolloProvider>
-);
+type ProvidersProps = {
+  children: React.ReactNode;
+};
+
+const Providers = ({ children }: ProvidersProps): React.JSX.Element => {
+  return <AppFlowProvider>{children}</AppFlowProvider>;
+};
+
+export default Providers;

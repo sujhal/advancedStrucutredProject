@@ -19,7 +19,7 @@ module.exports = {
           '@types': './src/types',
           '@i18n': './src/i18n',
           '@config': './src/config',
-          '@assets': './src/assets',
+          '@res': './src/res',
         },
       },
     ],

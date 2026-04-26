@@ -1,7 +1,7 @@
-import type { Config } from 'jest';
+import type { Config } from '@jest/types';
 
-const config: Config = {
-  preset: 'react-native',
+const config: Config.InitialOptions = {
+  preset: '@react-native/jest-preset',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
@@ -22,7 +22,7 @@ const config: Config = {
     '^@i18n$': '<rootDir>/src/i18n/index.ts',
     '^@i18n/(.*)$': '<rootDir>/src/i18n/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
-    '^@assets/(.*)$': '<rootDir>/src/assets/$1',
+    '^@res/(.*)$': '<rootDir>/src/res/$1',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@react-native|react-native|@react-navigation|react-redux|@reduxjs)/)',

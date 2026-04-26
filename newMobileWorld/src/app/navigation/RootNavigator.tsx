@@ -1,54 +1,13 @@
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  type NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
-import AppNavigator from '@app/navigation/AppNavigator';
-import AuthNavigator from '@app/navigation/AuthNavigator';
-import { navigationRef } from '@app/navigation/NavigationService';
-import { ROUTE_NAMES } from '@app/navigation/routeNames';
-import { useIsAuthenticated } from '@store/useUserStore';
-import type { RootStackParamList } from '@types/navigation';
+import { useAppFlow } from '@app/state/AppFlowContext';
+import AuthNavigator from './AuthNavigator';
+import DrawerNavigator from './DrawerNavigator';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const RootNavigator = (): React.JSX.Element => {
+  const { isAuthenticated } = useAppFlow();
 
-const RootNavigationShell = () => {
-  const isAuthenticated = useIsAuthenticated();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const previousAuth = useRef(isAuthenticated);
-
-  useEffect(() => {
-    if (previousAuth.current === isAuthenticated) {
-      return;
-    }
-    previousAuth.current = isAuthenticated;
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: isAuthenticated ? ROUTE_NAMES.AppStack : ROUTE_NAMES.AuthStack,
-        },
-      ],
-    });
-  }, [isAuthenticated, navigation]);
-
-  return (
-    <Stack.Navigator
-      initialRouteName={isAuthenticated ? ROUTE_NAMES.AppStack : ROUTE_NAMES.AuthStack}
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name={ROUTE_NAMES.AuthStack} component={AuthNavigator} />
-      <Stack.Screen name={ROUTE_NAMES.AppStack} component={AppNavigator} />
-    </Stack.Navigator>
-  );
+  return isAuthenticated ? <DrawerNavigator /> : <AuthNavigator />;
 };
-
-const RootNavigator = () => (
-  <NavigationContainer ref={navigationRef}>
-    <RootNavigationShell />
-  </NavigationContainer>
-);
 
 export default RootNavigator;
